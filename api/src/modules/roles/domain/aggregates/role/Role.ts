@@ -63,4 +63,9 @@ export class Role extends AggregateRoot<RoleProps, RoleID> {
     const existent = this.allowList.find((user) => user.equals(allowedUser));
     if (!existent) this.props.allowList = [...new Set([...this.allowList, allowedUser])];
   }
+
+  removeAllowedUser(username: string): void {
+    const index = this.allowList.findIndex((user) => user.username === username);
+    if (index >= 0) this.props.allowList.splice(index, 1);
+  }
 }

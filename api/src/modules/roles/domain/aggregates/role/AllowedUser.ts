@@ -18,4 +18,22 @@ export class AllowedUser extends ValueObject<AllowedUserProps> {
   static create = (props: AllowedUserProps): AllowedUser => {
     return new AllowedUser(props);
   };
+
+  get username(): string {
+    return this.props.username;
+  }
+
+  get usernameType(): UsernameType {
+    return this.props.usernameType;
+  }
+
+  public equals(vo?: AllowedUser): boolean {
+    if (vo === null || vo === undefined) {
+      return false;
+    }
+    if (vo.props === undefined) {
+      return false;
+    }
+    return vo.props.username === this.username;
+  }
 }

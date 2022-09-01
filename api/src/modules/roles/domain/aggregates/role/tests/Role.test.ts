@@ -109,6 +109,26 @@ describe('Role', () => {
     });
   });
 
+  describe('remove allowed user', () => {
+    test('should renive allowed user succesfully', () => {
+      const allowedUser = mockAllowedUser();
+      const role = mockRole({ allowList: [allowedUser] });
+
+      role.removeAllowedUser(allowedUser.username);
+
+      expect(role.allowList).toEqual([]);
+    });
+
+    test('should ignore if user already added', () => {
+      const allowedUser = mockAllowedUser();
+      const role = mockRole({ allowList: [] });
+
+      role.removeAllowedUser(allowedUser.username);
+
+      expect(role.allowList).toEqual([]);
+    });
+  });
+
   describe('update name', () => {
     test('should update name successfully', () => {
       const newName = Name.create('new name');
