@@ -1,0 +1,30 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "prettier",
+    "jest"
+  ],
+  "extends": [
+    "plugin:@shopify/esnext",
+    "plugin:@shopify/typescript",
+    "plugin:@shopify/node",
+    "prettier",
+    "plugin:jest/recommended"
+  ],
+  "rules": { 
+    "no-console": "warn",
+    "prettier/prettier": "error",
+    "@typescript-eslint/naming-convention": "off",
+    "@typescript-eslint/no-extraneous-class": "off",
+    "no-prototype-builtins": "off",
+    "@typescript-eslint/member-ordering": "off",
+    "node/handle-callback-err": "off",
+    "import/extensions": "off"
+  },
+  "env": {
+    "jest/globals": true,
+    "node": true
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "lib": ["es6"],
+    "module": "commonjs",
+    "rootDir": "src",
+    "resolveJsonModule": true,
+    "removeComments": true,  
+    "allowJs": false,
+    "outDir": "build",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "types": ["node", "jest"],
+    "typeRoots" : ["./node_modules/@types"],
+    "baseUrl": ".",
+    "paths": {
+      "@core/*": ["./src/shared/core/*"],
+      "@utils/*": ["./src/shared/utils/*"],
+      "@activity/*": ["./src/contexts/activity/*"],
+      "@group/*": ["./src/contexts/group/*"],
+    }
+  },
+  "include": [
+    "src/**/*"
+  ],
+}
