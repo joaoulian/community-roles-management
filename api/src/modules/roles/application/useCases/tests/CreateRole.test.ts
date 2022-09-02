@@ -1,4 +1,4 @@
-import { RoleRepositoryMemoryImpl } from '@roles/infrastructure/RoleRepositoryMemoryImpl';
+import { RoleRepositoryMemoryImpl } from '@roles/infrastructure/repositories/RoleRepositoryMemoryImpl';
 import { MemberID } from '@roles/domain/aggregates/role/MemberID';
 import { MemberActor } from '@roles/application/actors/Member';
 import { CommunityID } from '@roles/domain/aggregates/role/CommunityID';
