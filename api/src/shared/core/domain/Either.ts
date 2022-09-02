@@ -14,6 +14,8 @@ export class Success<L, A> {
   isFailure(): this is Failure<L, A> {
     return false;
   }
+
+  run = () => this.value;
 }
 
 export class Failure<L, A> {
@@ -30,6 +32,10 @@ export class Failure<L, A> {
   isFailure(): this is Failure<L, A> {
     return true;
   }
+
+  run = () => {
+    throw this.value;
+  };
 }
 
 export const success = <L, A>(value: L): Either<L, A> => {

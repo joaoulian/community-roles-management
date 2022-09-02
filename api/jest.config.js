@@ -9,7 +9,7 @@ module.exports = {
   moduleNameMapper: {
     '@core/(.*)': '<rootDir>/src/shared/core/$1',
     '@utils/(.*)': '<rootDir>/src/shared/utils/$1',
-    '@activity/(.*)': '<rootDir>/src/contexts/activity/$1',
-    '@group/(.*)': '<rootDir>/src/contexts/group/$1',
+    '@shared/(.*)': '<rootDir>/src/shared/$1',
+    '@roles/(.*)': '<rootDir>/src/modules/roles/$1',
   },
 };

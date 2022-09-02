@@ -18,9 +18,9 @@
     "baseUrl": ".",
     "paths": {
       "@core/*": ["./src/shared/core/*"],
+      "@shared/*": ["./src/shared/*"],
       "@utils/*": ["./src/shared/utils/*"],
-      "@activity/*": ["./src/contexts/activity/*"],
-      "@group/*": ["./src/contexts/group/*"],
+      "@roles/*": ["./src/modules/roles/*"],
     }
   },
   "include": [
