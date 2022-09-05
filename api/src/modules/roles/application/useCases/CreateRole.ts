@@ -9,7 +9,7 @@ import { RoleRepository } from '@roles/domain/repositories/RoleRepository';
 
 import { MemberActor } from '../actors/Member';
 
-interface IRequest {
+export interface IRequest {
   communityId: string;
   name: string;
   permissions: string[];
