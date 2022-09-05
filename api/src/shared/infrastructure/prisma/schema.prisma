@@ -8,19 +8,23 @@ datasource db {
 }
 
 model Role {
-  id String @id @default(uuid())
-  name String
+  id          String        @id @default(uuid())
+  name        String
   communityId String
   permissions Permission[]
-  allowList AllowedUser[]
+  allowList   AllowedUser[]
+
+  @@unique([name])
 }
 
 model AllowedUser {
-  id String @id @default(uuid())
-  username String
+  id           String       @id @default(uuid())
+  username     String
   usernameType UsernameType
-  Role Role? @relation(fields: [roleId], references: [id])
-  roleId String
+  Role         Role?        @relation(fields: [roleId], references: [id])
+  roleId       String
+
+  @@unique([username])
 }
 
 enum Permission {
