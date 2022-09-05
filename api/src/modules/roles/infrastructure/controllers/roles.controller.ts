@@ -8,6 +8,7 @@ import { roleRepositoryPrismaImpl } from '@roles/infrastructure/repositories';
 import { MemberActor } from '@roles/application/actors/Member';
 import { MemberID } from '@roles/domain/aggregates/role/MemberID';
 import { GetRolesByCommunityId } from '@roles/application/useCases/GetRolesByCommunityId';
+import { UpdateRole } from '@roles/application/useCases/UpdateRole';
 
 class RolesController implements Controller {
   public path = '/role';
@@ -20,6 +21,7 @@ class RolesController implements Controller {
   public intializeRoutes() {
     this.router.post(this.path, this.createRole);
     this.router.get(this.path, this.getRolesByCommunityId);
+    this.router.put(`${this.path}/:id`, this.updateRole);
   }
 
   createRole = async (request: Request, response: Response) => {
@@ -37,6 +39,23 @@ class RolesController implements Controller {
 
     if (responseDto.isFailure()) response.status(500).send({ error: responseDto.value.message });
     else response.status(200).send({ id: responseDto.run().id });
+  };
+
+  updateRole = async (request: Request, response: Response) => {
+    const id = request.params.id;
+    const body = request.body;
+    const actor = new MemberActor({}, new MemberID());
+
+    const updatePermissions = new UpdateRole(roleRepositoryPrismaImpl);
+
+    const responseDto = await updatePermissions.execute(actor, {
+      roleId: id,
+      permissions: body.permissions,
+      name: body.name,
+    });
+
+    if (responseDto.isFailure()) response.status(500).send({ error: responseDto.value.message });
+    else response.status(200).send({ success: true });
   };
 
   getRolesByCommunityId = async (request: Request, response: Response) => {

@@ -2,19 +2,23 @@ import { RoleDialog, RoleToBeSaved } from 'components/RoleDialog';
 import { RolesList } from 'components/RolesList';
 import { useEffect, useState } from 'react';
 import { roleService } from 'services/RoleService';
+import { toast } from 'react-toastify';
 
 export const RolesTab = (props: RolesTabProps) => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [role, setRole] = useState<any | null>(null);
   const [loadedRoles, setLoadedRoles] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
+    setLoading(true);
     loadRoles();
   }, [])
 
   const loadRoles = async () => {
     const { roles } = await roleService.getRolesByCommunityId(props.communityId);
     setLoadedRoles(roles ?? []);
+    setLoading(false);
   }
 
   const onEdit = (roleId: string) => {
@@ -31,7 +35,13 @@ export const RolesTab = (props: RolesTabProps) => {
   }
 
   const update = async (role: RoleToBeSaved & { id: string }) => {
-    console.log('updating', role)
+    await roleService.updateRole(role.id, {
+      name: role.name,
+      permissions: role.permissions
+    });
+    setDialogOpen(false);
+    loadRoles();
+    toast.success("Updated sucessfully");
   }
 
   const create = async (role: RoleToBeSaved & { id: undefined }) => {
@@ -41,7 +51,9 @@ export const RolesTab = (props: RolesTabProps) => {
       name: role.name,
       permissions: role.permissions
     })
+    setDialogOpen(false);
     loadRoles();
+    toast.success("Created sucessfully");
   }
 
   const onSaveRole = async (role: RoleToBeSaved) => {
@@ -54,7 +66,7 @@ export const RolesTab = (props: RolesTabProps) => {
       <div id="roles" data-tab-content className="w-full">
         <div className="mb-24">
           <Header />
-          <RolesList onEdit={onEdit} roles={loadedRoles} />
+          {loading ? <progress className="progress w-56"></progress> : <RolesList onEdit={onEdit} roles={loadedRoles} />}
           {dialogOpen && <RoleDialog open={dialogOpen} closeDialog={onClose} role={role ? { id: role.id, name: role.name, permissions: role.permissions } : undefined} onSave={onSaveRole} />}
           <button className="btn btn-primary mt-12" onClick={() => setDialogOpen(true)}>New Role</button>
         </div>

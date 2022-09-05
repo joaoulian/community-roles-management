@@ -59,6 +59,10 @@ export class Role extends AggregateRoot<RoleProps, RoleID> {
     if (index >= 0) this.props.permissions.splice(index, 1);
   }
 
+  updatePermissions(permissions: Permission[]): void {
+    this.props.permissions = permissions;
+  }
+
   addAllowedUser(allowedUser: AllowedUser): void {
     const existent = this.allowList.find((user) => user.equals(allowedUser));
     if (!existent) this.props.allowList = [...new Set([...this.allowList, allowedUser])];

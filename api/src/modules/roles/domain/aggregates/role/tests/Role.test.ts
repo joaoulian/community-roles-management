@@ -139,4 +139,15 @@ describe('Role', () => {
       expect(role.name.equals(newName)).toBeTruthy();
     });
   });
+
+  describe('update permissions', () => {
+    test('should update permissions successfully', () => {
+      const permissions = [Permission.ManageChannels];
+      const role = mockRole({ permissions: [Permission.Administrator] });
+
+      role.updatePermissions(permissions);
+
+      expect(role.permissions).toEqual(permissions);
+    });
+  });
 });
