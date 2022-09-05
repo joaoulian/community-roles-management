@@ -5,6 +5,10 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return <>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+      rel="stylesheet"
+    />
     <Component {...pageProps} />
     <ToastContainer
       position="top-right"

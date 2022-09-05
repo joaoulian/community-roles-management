@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Allowlist } from "./Allowlist";
 import { Permissions } from './Permissions';
 import { Tabs } from "./Tabs";
 
@@ -14,9 +15,13 @@ const ALL_PERMISSIONS = [
   { name: 'ADMINISTRATOR', title: 'Administrator', description: 'Allows full control of the community' }
 ];
 
+const TABS = ['Permissions', 'Allowlist'];
+
 export const RoleDialog = (props: RoleDialogProps) => {
   const [name, setName] = useState<string>('');
   const [activePermissions, setActivePermissions] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<string>(TABS[0])
+  const [allowlist, setAllowlist] = useState<string[]>([])
 
   const editMode = !!props.role;
 
@@ -24,6 +29,7 @@ export const RoleDialog = (props: RoleDialogProps) => {
     if (props.role) {
       setActivePermissions(props.role.permissions);
       setName(props.role.name);
+      setAllowlist([])
     }
   }, [props.role])
 
@@ -41,6 +47,19 @@ export const RoleDialog = (props: RoleDialogProps) => {
       permissions: activePermissions,
       id: props.role?.id ?? undefined
     })
+  }
+
+  const addUser = (user: string) => {
+    const tempAllowlist = [...allowlist];
+    tempAllowlist.push(user);
+    setAllowlist(tempAllowlist);
+  }
+
+  const removeUser = (user: string) => {
+    const tempAllowlist = [...allowlist];
+    const index = allowlist.findIndex(item => item === user);
+    if (index >= 0) tempAllowlist.splice(index, 1);
+    setAllowlist(tempAllowlist);
   }
 
   return (
@@ -63,9 +82,10 @@ export const RoleDialog = (props: RoleDialogProps) => {
               onChange={e => setName(e.target.value)}
             />
           </div>
-          <Tabs tabs={['Permissions', 'Allowlist']} active="Permissions" selectTab={(tab) => console.log(tab)} />
+          <Tabs tabs={TABS} active={activeTab} selectTab={(tab) => setActiveTab(tab)} />
           <div className="px-4 py-8 h-full overflow-y-auto relative">
-            <Permissions activePermissions={activePermissions} allPermissions={ALL_PERMISSIONS} onChange={onChange} />
+            {activeTab === 'Permissions' && <Permissions activePermissions={activePermissions} allPermissions={ALL_PERMISSIONS} onChange={onChange} />}
+            {activeTab === 'Allowlist' && <Allowlist list={allowlist} add={addUser} remove={removeUser} />}
           </div>
         </div>
         <div className="modal-action flex items-center justify-center">
