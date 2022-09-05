@@ -4,7 +4,7 @@ import { Repository } from '@core/domain/Repository';
 export class MemoryRepository<Aggregate extends AggregateRoot<any, any>>
   implements Repository<Aggregate>
 {
-  private aggregates: Aggregate[] = [];
+  protected aggregates: Aggregate[] = [];
 
   async save(aggregate: Aggregate): Promise<void> {
     this.aggregates.push(aggregate);

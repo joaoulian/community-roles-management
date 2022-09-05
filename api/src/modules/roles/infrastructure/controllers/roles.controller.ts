@@ -7,6 +7,7 @@ import {
 import { roleRepositoryPrismaImpl } from '@roles/infrastructure/repositories';
 import { MemberActor } from '@roles/application/actors/Member';
 import { MemberID } from '@roles/domain/aggregates/role/MemberID';
+import { GetRolesByCommunityId } from '@roles/application/useCases/GetRolesByCommunityId';
 
 class RolesController implements Controller {
   public path = '/role';
@@ -18,6 +19,7 @@ class RolesController implements Controller {
 
   public intializeRoutes() {
     this.router.post(this.path, this.createRole);
+    this.router.get(this.path, this.getRolesByCommunityId);
   }
 
   createRole = async (request: Request, response: Response) => {
@@ -35,6 +37,26 @@ class RolesController implements Controller {
 
     if (responseDto.isFailure()) response.status(500).send({ error: responseDto.value.message });
     else response.status(200).send({ id: responseDto.run().id });
+  };
+
+  getRolesByCommunityId = async (request: Request, response: Response) => {
+    const communityId = Array.isArray(request.query.communityId)
+      ? request.query.communityId[0].toString()
+      : request.query.communityId?.toString();
+
+    if (communityId) {
+      const getRolesByCommunityIdUseCase = new GetRolesByCommunityId(roleRepositoryPrismaImpl);
+
+      const responseDto = await getRolesByCommunityIdUseCase.execute(
+        new MemberActor({}, new MemberID()),
+        { communityId },
+      );
+
+      if (responseDto.isFailure()) response.status(500).send({ error: responseDto.value.message });
+      else response.status(200).send(responseDto.run());
+    } else {
+      response.status(200).send({ error: 'Invalid community id' });
+    }
   };
 }
 

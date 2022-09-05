@@ -15,7 +15,7 @@ export const RolesList = (props: RolesListProps) => {
             </div>
           </div>
           <div className="flex items-center">
-            <button className="btn btn-outline text-base-content" onClick={() => props.onEdit(role.name)}>Edit</button>
+            <button className="btn btn-outline text-base-content" onClick={() => props.onEdit(role.id)}>Edit</button>
           </div>
         </div>
       ))}
@@ -24,8 +24,9 @@ export const RolesList = (props: RolesListProps) => {
 }
 
 interface RolesListProps {
-  onEdit: (roleName: string) => void;
+  onEdit: (roleId: string) => void;
   roles: {
+    id: string;
     name: string;
     members: number;
   }[]

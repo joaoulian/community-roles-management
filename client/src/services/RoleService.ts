@@ -24,6 +24,23 @@ class RoleService {
       }
     }
   }
+
+  public async getRolesByCommunityId(communityId: string): Promise<any> {
+    try {
+      const { data } = await this.instance.get(
+        `/role?communityId=${communityId}`
+      )
+      return data
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        console.log('error message: ', err.message)
+        throw new APIError(err.message)
+      } else {
+        console.log('unexpected error: ', err)
+        throw new APIError('An unexpected error occurred')
+      }
+    }
+  }
 }
 
 interface CreateRole {
