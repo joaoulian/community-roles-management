@@ -1,8 +1,9 @@
 import { RoleDialog, RoleToBeSaved } from 'components/RoleDialog';
 import { RolesList } from 'components/RolesList';
 import { useState } from 'react';
+import { roleService } from 'services/RoleService';
 
-export const RolesTab = () => {
+export const RolesTab = (props: RolesTabProps) => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [role, setRole] = useState<string | null>(null);
 
@@ -24,7 +25,12 @@ export const RolesTab = () => {
   }
 
   const create = async (role: RoleToBeSaved & { id: undefined }) => {
-    console.log('creating', role)
+    await roleService.createRole({
+      allowList: [],
+      communityId: props.communityId,
+      name: role.name,
+      permissions: role.permissions
+    })
   }
 
   const onSaveRole = async (role: RoleToBeSaved) => {
@@ -54,4 +60,8 @@ const Header = () => {
       <p className=" mb-10">Determine the roles members have in the community</p>
     </>
   )
+}
+
+export interface RolesTabProps {
+  communityId: string;
 }

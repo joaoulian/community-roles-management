@@ -1,5 +1,6 @@
-import express, { Router, Request, Response } from 'express';
+import express from 'express';
 import * as bodyParser from 'body-parser';
+import cors from 'cors';
 import { Controller } from '@core/infrastructure/Controller';
 
 class App {
@@ -16,6 +17,7 @@ class App {
 
   private initializeMiddlewares() {
     this.app.use(bodyParser.json());
+    this.app.use(cors());
   }
 
   private initializeControllers(controllers: Controller[]) {

@@ -2,7 +2,7 @@ export const Permission = (props: PermissionProps) => {
   return (
     <div className="flex flex-col p-2 border-b">
       <h4 className="flex w-full justify-between items-cemter font-bold">
-        {props.name}
+        {props.title}
         <label className="label cursor-pointer">
           <input type="checkbox" className="toggle toggle-primary" checked={props.checked} onChange={() => props.onChange(props.name)} />
         </label>
@@ -15,6 +15,7 @@ export const Permission = (props: PermissionProps) => {
 export interface PermissionProps {
   name: string;
   description: string;
+  title: string;
   checked: boolean;
   onChange: (name: string) => void;
 }

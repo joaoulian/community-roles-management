@@ -3,13 +3,14 @@ import { Permissions } from './Permissions';
 
 const ALL_PERMISSIONS = [
   {
-    name: 'Manage Channels',
+    name: 'MANAGE_CHANNELS',
+    title: 'Manage channels',
     description: 'Allows members to create, edit or delete channels',
   },
-  { name: 'Manage Roles', description: 'Allows members to create, edit or delete roles' },
-  { name: 'Manage Memberships', description: 'Allows managing community members' },
-  { name: 'Manage Conversations', description: 'Allows managing conversations' },
-  { name: 'Administrator', description: 'Allows full control of the community' }
+  { name: 'MANAGE_ROLES', title: 'Manage Roles', description: 'Allows members to create, edit or delete roles' },
+  { name: 'MANAGE_MEMBERSHIPS', title: 'Manage Memberships', description: 'Allows managing community members' },
+  { name: 'MANAGE_CONVERSATIONS', title: 'Manage conversations', description: 'Allows managing conversations' },
+  { name: 'ADMINISTRATOR', title: 'Administrator', description: 'Allows full control of the community' }
 ];
 
 export const RoleDialog = (props: RoleDialogProps) => {

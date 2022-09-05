@@ -7,8 +7,8 @@ export const Permissions = (props: PermissionsProps) => {
 
   return (
     <div className="form-control w-full mb-4 gap-2">
-      {props.allPermissions.map(({ name, description }, key) => (
-        <Permission key={`permission-${key}`} name={name} description={description} checked={isActive(name)} onChange={props.onChange} />
+      {props.allPermissions.map(({ name, description, title }, key) => (
+        <Permission key={`permission-${key}`} name={name} title={title} description={description} checked={isActive(name)} onChange={props.onChange} />
       ))}
     </div>
   )
@@ -22,5 +22,6 @@ interface PermissionsProps {
 
 export interface PermissionData {
   name: string;
+  title: string;
   description: string;
 }

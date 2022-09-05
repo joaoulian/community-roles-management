@@ -17,7 +17,7 @@ class RolesController implements Controller {
   }
 
   public intializeRoutes() {
-    this.router.get(this.path, this.createRole);
+    this.router.post(this.path, this.createRole);
   }
 
   createRole = async (request: Request, response: Response) => {
@@ -31,9 +31,10 @@ class RolesController implements Controller {
       permissions: body.permissions,
     };
 
-    await createRoleUseCase.execute(new MemberActor({}, new MemberID()), dto);
+    const responseDto = await createRoleUseCase.execute(new MemberActor({}, new MemberID()), dto);
 
-    response.json({ success: true });
+    if (responseDto.isFailure()) response.status(500).send({ error: responseDto.value.message });
+    else response.status(200).send({ id: responseDto.run().id });
   };
 }
 

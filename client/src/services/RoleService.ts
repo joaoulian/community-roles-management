@@ -1,24 +1,20 @@
 import axios, { AxiosInstance } from 'axios'
 
-export class UserService {
+class RoleService {
   private instance: AxiosInstance
 
   constructor() {
     this.instance = axios.create({
-      baseURL: 'http://localhost:5000/api',
+      baseURL: 'http://localhost:5000',
       timeout: 1000,
-      headers: {
-        Authorization: `${localStorage.getItem('token')}`,
-      },
     })
   }
 
-  public async getUserData(): Promise<any> {
+  public async createRole(role: CreateRole): Promise<any> {
     try {
-      const { data } = await this.instance.get(`/me`)
+      const { data } = await this.instance.post(`/role`, role)
       return data
     } catch (err) {
-      localStorage.removeItem('token')
       if (axios.isAxiosError(err)) {
         console.log('error message: ', err.message)
         throw new APIError(err.message)
@@ -30,4 +26,13 @@ export class UserService {
   }
 }
 
-export class APIError extends Error {}
+interface CreateRole {
+  allowList: string[]
+  communityId: string
+  name: string
+  permissions: string[]
+}
+
+class APIError extends Error {}
+
+export const roleService = new RoleService()
