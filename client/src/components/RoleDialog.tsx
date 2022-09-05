@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Permissions } from './Permissions';
+import { Tabs } from "./Tabs";
 
 const ALL_PERMISSIONS = [
   {
@@ -62,7 +63,10 @@ export const RoleDialog = (props: RoleDialogProps) => {
               onChange={e => setName(e.target.value)}
             />
           </div>
-          <Permissions activePermissions={activePermissions} allPermissions={ALL_PERMISSIONS} onChange={onChange} />
+          <Tabs tabs={['Permissions', 'Allowlist']} active="Permissions" selectTab={(tab) => console.log(tab)} />
+          <div className="px-4 py-8 h-full overflow-y-auto relative">
+            <Permissions activePermissions={activePermissions} allPermissions={ALL_PERMISSIONS} onChange={onChange} />
+          </div>
         </div>
         <div className="modal-action flex items-center justify-center">
           <button className="btn btn-primary" onClick={onSave}> Save </button>
