@@ -1,4 +1,4 @@
-import { RoleDialog } from 'components/RoleDialog';
+import { RoleDialog, RoleToBeSaved } from 'components/RoleDialog';
 import { RolesList } from 'components/RolesList';
 import { useState } from 'react';
 
@@ -16,13 +16,26 @@ export const RolesTab = () => {
     setRole(null);
   }
 
+  const update = async (role: RoleToBeSaved & { id: string }) => {
+    console.log('updating', role)
+  }
+
+  const create = async (role: RoleToBeSaved & { id: undefined }) => {
+    console.log('creating', role)
+  }
+
+  const onSaveRole = async (role: RoleToBeSaved) => {
+    if (!!role.id) update({ ...role, id: role.id });
+    else create({ ...role, id: undefined });
+  }
+
   return (
     <>
       <div id="roles" data-tab-content className="w-full">
         <div className="mb-24">
           <Header />
           <RolesList onEdit={onEdit} />
-          {dialogOpen && <RoleDialog open={dialogOpen} closeDialog={onClose} role={role ? { id: 'x', name: role, permissions: [] } : undefined} />}
+          {dialogOpen && <RoleDialog open={dialogOpen} closeDialog={onClose} role={role ? { id: 'x', name: role, permissions: [] } : undefined} onSave={onSaveRole} />}
           <button className="btn btn-primary mt-12" onClick={() => setDialogOpen(true)}>New Role</button>
         </div>
       </div>

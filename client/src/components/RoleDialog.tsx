@@ -34,7 +34,11 @@ export const RoleDialog = (props: RoleDialogProps) => {
   }
 
   const onSave = () => {
-    console.log({ permissions: activePermissions, name });
+    props.onSave({
+      name,
+      permissions: activePermissions,
+      id: props.role?.id ?? undefined
+    })
   }
 
   return (
@@ -71,10 +75,17 @@ interface RoleDialogProps {
   open: boolean;
   closeDialog: () => void;
   role?: Role;
+  onSave: (role: RoleToBeSaved) => Promise<void>;
 }
 
 interface Role {
   id: string;
+  name: string;
+  permissions: string[];
+}
+
+export interface RoleToBeSaved {
+  id?: string;
   name: string;
   permissions: string[];
 }
