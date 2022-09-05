@@ -1,4 +1,4 @@
-export const RolesList = () => {
+export const RolesList = (props: RolesListProps) => {
   const roles = ['Admins', 'Moderators', 'Members', 'Everyone'];
 
   return (
@@ -17,10 +17,14 @@ export const RolesList = () => {
             </div>
           </div>
           <div className="flex items-center">
-            <button className="btn btn-outline text-base-content">Edit</button>
+            <button className="btn btn-outline text-base-content" onClick={() => props.onEdit(role)}>Edit</button>
           </div>
         </div>
       ))}
     </div>
   )
+}
+
+interface RolesListProps {
+  onEdit: (roleName: string) => void;
 }
