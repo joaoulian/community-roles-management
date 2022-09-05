@@ -6,6 +6,9 @@ export const RolesTab = () => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [role, setRole] = useState<string | null>(null);
 
+  const rolesString = ['Admins', 'Moderators', 'Members', 'Everyone'];
+  const roles = rolesString.map(role => ({ name: role, members: Math.floor(10 * Math.random()) }))
+
   const onEdit = (roleName: string) => {
     setRole(roleName);
     setDialogOpen(true);
@@ -34,7 +37,7 @@ export const RolesTab = () => {
       <div id="roles" data-tab-content className="w-full">
         <div className="mb-24">
           <Header />
-          <RolesList onEdit={onEdit} />
+          <RolesList onEdit={onEdit} roles={roles} />
           {dialogOpen && <RoleDialog open={dialogOpen} closeDialog={onClose} role={role ? { id: 'x', name: role, permissions: [] } : undefined} onSave={onSaveRole} />}
           <button className="btn btn-primary mt-12" onClick={() => setDialogOpen(true)}>New Role</button>
         </div>

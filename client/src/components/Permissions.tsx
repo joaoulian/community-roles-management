@@ -1,7 +1,6 @@
 import { Permission } from "./Permission";
 
 export const Permissions = (props: PermissionsProps) => {
-
   const isActive = (permissionName: string): boolean => {
     return props.activePermissions.includes(permissionName);
   }

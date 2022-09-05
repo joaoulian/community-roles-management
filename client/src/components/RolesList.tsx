@@ -1,9 +1,7 @@
 export const RolesList = (props: RolesListProps) => {
-  const roles = ['Admins', 'Moderators', 'Members', 'Everyone'];
-
   return (
     <div className="grid gap-6">
-      {roles.map((role, key) => (
+      {props.roles.map((role, key) => (
         <div key={`role-${key}`} className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="avatar">
@@ -12,12 +10,12 @@ export const RolesList = (props: RolesListProps) => {
               </div>
             </div>
             <div>
-              <p className="text-lg font-medium">{role}</p>
-              <p className="text-sm">{Math.floor(10 * Math.random())} members</p>
+              <p className="text-lg font-medium">{role.name}</p>
+              <p className="text-sm">{role.members} members</p>
             </div>
           </div>
           <div className="flex items-center">
-            <button className="btn btn-outline text-base-content" onClick={() => props.onEdit(role)}>Edit</button>
+            <button className="btn btn-outline text-base-content" onClick={() => props.onEdit(role.name)}>Edit</button>
           </div>
         </div>
       ))}
@@ -27,4 +25,8 @@ export const RolesList = (props: RolesListProps) => {
 
 interface RolesListProps {
   onEdit: (roleName: string) => void;
+  roles: {
+    name: string;
+    members: number;
+  }[]
 }
