@@ -14,6 +14,7 @@ export const mockRole = (props?: Partial<RoleProps>): Role => {
     communityId,
     name,
     permissions,
+    users: [],
     ...props,
   });
 };

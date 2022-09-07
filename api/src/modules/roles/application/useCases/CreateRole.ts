@@ -5,6 +5,7 @@ import { CommunityID } from '@roles/domain/aggregates/role/CommunityID';
 import { CommunityPermissions } from '@roles/domain/aggregates/role/CommunityPermissions';
 import { CommunityPermission } from '@roles/domain/aggregates/role/Permission';
 import { Role } from '@roles/domain/aggregates/role/Role';
+import { UserID } from '@roles/domain/aggregates/role/UserID';
 import { RoleRepository } from '@roles/domain/repositories/RoleRepository';
 
 import { PersonActor } from '../actors/Person';
@@ -15,6 +16,7 @@ export interface IRequest {
   communityId: string;
   name: string;
   permissions: string[];
+  users: string[];
 }
 
 interface IResponse {
@@ -47,10 +49,13 @@ export class CreateRoleUseCase implements UseCase<IRequest, IResponse> {
         permissions: permissionsList,
       });
 
+      const users = request.users.map((userId) => new UserID(userId));
+
       const role = Role.create({
         communityId,
         name,
         permissions: [communityPermissions],
+        users,
       });
 
       await this.roleRepository.save(role);

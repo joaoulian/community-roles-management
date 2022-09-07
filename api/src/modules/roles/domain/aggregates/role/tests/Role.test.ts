@@ -17,6 +17,7 @@ describe('Role', () => {
         communityId,
         name,
         permissions,
+        users: [],
       });
 
       expect(role).toBeInstanceOf(Role);

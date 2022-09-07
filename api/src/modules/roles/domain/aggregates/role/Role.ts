@@ -4,11 +4,13 @@ import { Name } from '@core/domain/valueObjects/Name';
 import { CommunityID } from './CommunityID';
 import { Permissions } from './Permissions';
 import { RoleID } from './RoleID';
+import { UserID } from './UserID';
 
 export interface RoleProps {
   communityId: CommunityID;
   name: Name;
   permissions: Permissions[];
+  users: UserID[];
 }
 
 export class Role extends AggregateRoot<RoleProps, RoleID> {
@@ -30,6 +32,10 @@ export class Role extends AggregateRoot<RoleProps, RoleID> {
 
   get permissions(): Permissions[] {
     return this.props.permissions;
+  }
+
+  get users(): UserID[] {
+    return this.props.users;
   }
 
   static create(props: RoleProps, id?: RoleID): Role {

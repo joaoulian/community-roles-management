@@ -31,6 +31,7 @@ class RolesController implements Controller {
       communityId: body.communityId,
       name: body.name,
       permissions: body.permissions,
+      users: body.users,
     };
 
     const responseDto = await createRoleUseCase.execute(

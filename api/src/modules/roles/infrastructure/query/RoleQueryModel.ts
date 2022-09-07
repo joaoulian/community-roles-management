@@ -10,6 +10,7 @@ export class RoleQueryModel {
       },
       include: {
         permissions: true,
+        users: true,
       },
     });
   }

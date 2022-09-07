@@ -8,10 +8,11 @@ datasource db {
 }
 
 model Role {
-  id          String        @id @default(uuid())
+  id          String         @id @default(uuid())
   name        String
   communityId String
   permissions Permissions[]
+  users       UsersOnRoles[]
 
   @@unique([name])
 }
@@ -24,4 +25,12 @@ model Permissions {
   Role        Role     @relation(fields: [roleId], references: [id])
   roleId      String
   permissions String[]
+}
+
+model UsersOnRoles {
+  Role   Role   @relation(fields: [roleId], references: [id])
+  roleId String
+  userId String
+
+  @@id([userId, roleId])
 }

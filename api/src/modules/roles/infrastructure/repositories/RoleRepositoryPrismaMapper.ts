@@ -1,5 +1,5 @@
 import { Name } from '@core/domain/valueObjects/Name';
-import { Role as PrismaRole, Permissions as PrismaPermissions } from '@prisma/client';
+import { Role as PrismaRole, Permissions as PrismaPermissions, UsersOnRoles } from '@prisma/client';
 import {
   convertStringToChannelPermission,
   convertStringToCommunityPermission,
@@ -12,9 +12,12 @@ import { ChannelPermission, CommunityPermission } from '@roles/domain/aggregates
 import { Permissions } from '@roles/domain/aggregates/role/Permissions';
 import { Role } from '@roles/domain/aggregates/role/Role';
 import { RoleID } from '@roles/domain/aggregates/role/RoleID';
+import { UserID } from '@roles/domain/aggregates/role/UserID';
 
 export class RoleRepositoryPrismaMapper {
-  static toDomain(db: PrismaRole & { permissions: PrismaPermissions[] }): Role {
+  static toDomain(
+    db: PrismaRole & { permissions: PrismaPermissions[]; users: UsersOnRoles[] },
+  ): Role {
     const communityId = new CommunityID(db.communityId);
     const id = new RoleID(db.id);
     const name = Name.create(db.name);
@@ -35,6 +38,7 @@ export class RoleRepositoryPrismaMapper {
         communityId,
         name,
         permissions,
+        users: db.users.map((relation) => new UserID(relation.userId)),
       },
       id,
     );
