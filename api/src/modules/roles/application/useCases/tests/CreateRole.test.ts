@@ -1,9 +1,9 @@
 import { RoleRepositoryMemoryImpl } from '@roles/infrastructure/repositories/RoleRepositoryMemoryImpl';
-import { PersonActor } from '@roles/application/actors/Person';
 import { CommunityID } from '@roles/domain/aggregates/role/CommunityID';
 import { RoleID } from '@roles/domain/aggregates/role/RoleID';
 import { CommunityPermissions } from '@roles/domain/aggregates/role/CommunityPermissions';
-import { UniqueEntityID } from '@core/domain/UniqueEntityID';
+import { mockContext } from '@core/application/tests/mocks/Context.mock';
+import { ForbiddenError } from '@core/application/ForbiddenError';
 
 import { CreateRoleUseCase, CreateRoleValidationError, InvalidPermissions } from '../CreateRole';
 
@@ -11,14 +11,15 @@ describe('Create role use case', () => {
   it('should create new role successfully', async () => {
     const roleRepository = new RoleRepositoryMemoryImpl();
     const createRoleUseCase = new CreateRoleUseCase(roleRepository);
-    const personActor = new PersonActor({}, new UniqueEntityID());
     const request = {
       communityId: new CommunityID().toValue(),
       name: 'batata',
       permissions: ['ADMINISTRATOR'],
+      users: [],
     };
+    const context = mockContext('user-id', { [request.communityId]: ['ADMINISTRATOR'] });
 
-    const roleOrError = await createRoleUseCase.execute(personActor, request);
+    const roleOrError = await createRoleUseCase.execute(request, context);
     const { id } = roleOrError.run();
 
     const roleId = new RoleID(id);
@@ -38,14 +39,15 @@ describe('Create role use case', () => {
   it('should throw error if name is invalid', async () => {
     const roleRepository = new RoleRepositoryMemoryImpl();
     const createRoleUseCase = new CreateRoleUseCase(roleRepository);
-    const personActor = new PersonActor({}, new UniqueEntityID());
     const request = {
       communityId: new CommunityID().toValue(),
       name: '',
       permissions: ['ADMINISTRATOR'],
+      users: [],
     };
+    const context = mockContext('user-id', { [request.communityId]: ['ADMINISTRATOR'] });
 
-    const roleOrError = await createRoleUseCase.execute(personActor, request);
+    const roleOrError = await createRoleUseCase.execute(request, context);
     expect(roleOrError.value).toBeInstanceOf(CreateRoleValidationError);
     expect(roleOrError.isFailure()).toBeTruthy();
 
@@ -56,14 +58,15 @@ describe('Create role use case', () => {
   it('should throw error if permissions is invalid', async () => {
     const roleRepository = new RoleRepositoryMemoryImpl();
     const createRoleUseCase = new CreateRoleUseCase(roleRepository);
-    const personActor = new PersonActor({}, new UniqueEntityID());
     const request = {
       communityId: new CommunityID().toValue(),
       name: 'batata',
       permissions: ['legal'],
+      users: [],
     };
+    const context = mockContext('user-id', { [request.communityId]: ['ADMINISTRATOR'] });
 
-    const roleOrError = await createRoleUseCase.execute(personActor, request);
+    const roleOrError = await createRoleUseCase.execute(request, context);
     expect(roleOrError.value).toBeInstanceOf(CreateRoleValidationError);
     expect(roleOrError.isFailure() && roleOrError.getError().message).toEqual(
       new InvalidPermissions([]).message,
@@ -72,5 +75,55 @@ describe('Create role use case', () => {
 
     const storedRoles = await roleRepository.getAll();
     expect(storedRoles.length).toEqual(0);
+  });
+
+  it('should throw forbidden error if user context dont have right permissions', async () => {
+    const roleRepository = new RoleRepositoryMemoryImpl();
+    const createRoleUseCase = new CreateRoleUseCase(roleRepository);
+    const request = {
+      communityId: new CommunityID().toValue(),
+      name: 'batata',
+      permissions: ['ADMINISTRATOR'],
+      users: [],
+    };
+    const context = mockContext('user-id', { [request.communityId]: ['MANAGE_MEMBERSHIPS'] });
+
+    let error;
+    try {
+      await createRoleUseCase.execute(request, context);
+    } catch (err) {
+      error = err;
+    }
+    expect(error).toBeInstanceOf(ForbiddenError);
+  });
+
+  it('should not throw forbidden error if context user has ADMINISTRATOR permission', async () => {
+    const roleRepository = new RoleRepositoryMemoryImpl();
+    const createRoleUseCase = new CreateRoleUseCase(roleRepository);
+    const request = {
+      communityId: new CommunityID().toValue(),
+      name: 'batata',
+      permissions: ['ADMINISTRATOR'],
+      users: [],
+    };
+    const context = mockContext('user-id', { [request.communityId]: ['ADMINISTRATOR'] });
+
+    const response = await createRoleUseCase.execute(request, context);
+    expect(response.isSuccess()).toBeTruthy();
+  });
+
+  it('should not throw forbidden error if context user has MANAGE_ROLES permission', async () => {
+    const roleRepository = new RoleRepositoryMemoryImpl();
+    const createRoleUseCase = new CreateRoleUseCase(roleRepository);
+    const request = {
+      communityId: new CommunityID().toValue(),
+      name: 'batata',
+      permissions: ['ADMINISTRATOR'],
+      users: [],
+    };
+    const context = mockContext('user-id', { [request.communityId]: ['MANAGE_ROLES'] });
+
+    const response = await createRoleUseCase.execute(request, context);
+    expect(response.isSuccess()).toBeTruthy();
   });
 });

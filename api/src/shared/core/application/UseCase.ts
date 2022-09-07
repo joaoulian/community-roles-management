@@ -1,5 +1,5 @@
-import { Actor } from './Actor';
+import { Context } from './Context';
 
 export interface UseCase<IRequest, IResponse> {
-  execute: (actor: Actor<any>, request: IRequest) => Promise<IResponse | any>;
+  execute: (request: IRequest, context?: Context) => Promise<IResponse | any>;
 }

@@ -1,7 +1,9 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import * as bodyParser from 'body-parser';
 import cors from 'cors';
 import { Controller } from '@core/infrastructure/Controller';
+
+import { ContextBuilder } from './context/ContextBuilder';
 
 class App {
   public app: express.Application;
@@ -18,6 +20,14 @@ class App {
   private initializeMiddlewares() {
     this.app.use(bodyParser.json());
     this.app.use(cors());
+    this.app.use(this.contextMiddleware);
+  }
+
+  private async contextMiddleware(req: Request, res: Response, next: NextFunction) {
+    const context = await new ContextBuilder().build(req, res);
+    // eslint-disable-next-line require-atomic-updates
+    res.locals.user = context;
+    next();
   }
 
   private initializeControllers(controllers: Controller[]) {
