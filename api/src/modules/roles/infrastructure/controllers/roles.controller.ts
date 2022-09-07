@@ -44,6 +44,7 @@ class RolesController implements Controller {
 
   getRoleById = async (request: Request, response: Response) => {
     const role = await roleQueryModel.getRoleById(request.params.id);
+    if (!role) response.status(404).send({ error: 'Role not founded' });
     response.status(200).send(role);
   };
 }
