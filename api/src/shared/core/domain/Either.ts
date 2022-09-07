@@ -36,6 +36,10 @@ export class Failure<L, A> {
   run = () => {
     throw this.value;
   };
+
+  getError = (): A => {
+    return this.value;
+  };
 }
 
 export const success = <L, A>(value: L): Either<L, A> => {

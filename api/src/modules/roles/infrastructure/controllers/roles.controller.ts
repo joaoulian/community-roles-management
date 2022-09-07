@@ -5,10 +5,10 @@ import {
   IRequest as CreateRoleDTO,
 } from '@roles/application/useCases/CreateRole';
 import { roleRepositoryPrismaImpl } from '@roles/infrastructure/repositories';
-import { MemberActor } from '@roles/application/actors/Member';
-import { MemberID } from '@roles/domain/aggregates/role/MemberID';
-import { GetRolesByCommunityId } from '@roles/application/useCases/GetRolesByCommunityId';
-import { UpdateRole } from '@roles/application/useCases/UpdateRole';
+import { PersonActor } from '@roles/application/actors/Person';
+import { UniqueEntityID } from '@core/domain/UniqueEntityID';
+
+import { roleQueryModel } from '../query';
 
 class RolesController implements Controller {
   public path = '/role';
@@ -20,8 +20,7 @@ class RolesController implements Controller {
 
   public intializeRoutes() {
     this.router.post(this.path, this.createRole);
-    this.router.get(this.path, this.getRolesByCommunityId);
-    this.router.put(`${this.path}/:id`, this.updateRole);
+    this.router.get(`${this.path}/:id`, this.getRoleById);
   }
 
   createRole = async (request: Request, response: Response) => {
@@ -29,53 +28,23 @@ class RolesController implements Controller {
 
     const body = request.body;
     const dto: CreateRoleDTO = {
-      allowList: body.allowList,
       communityId: body.communityId,
       name: body.name,
       permissions: body.permissions,
     };
 
-    const responseDto = await createRoleUseCase.execute(new MemberActor({}, new MemberID()), dto);
+    const responseDto = await createRoleUseCase.execute(
+      new PersonActor({}, new UniqueEntityID()),
+      dto,
+    );
 
     if (responseDto.isFailure()) response.status(500).send({ error: responseDto.value.message });
     else response.status(200).send({ id: responseDto.run().id });
   };
 
-  updateRole = async (request: Request, response: Response) => {
-    const id = request.params.id;
-    const body = request.body;
-    const actor = new MemberActor({}, new MemberID());
-
-    const updatePermissions = new UpdateRole(roleRepositoryPrismaImpl);
-
-    const responseDto = await updatePermissions.execute(actor, {
-      roleId: id,
-      permissions: body.permissions,
-      name: body.name,
-    });
-
-    if (responseDto.isFailure()) response.status(500).send({ error: responseDto.value.message });
-    else response.status(200).send({ success: true });
-  };
-
-  getRolesByCommunityId = async (request: Request, response: Response) => {
-    const communityId = Array.isArray(request.query.communityId)
-      ? request.query.communityId[0].toString()
-      : request.query.communityId?.toString();
-
-    if (communityId) {
-      const getRolesByCommunityIdUseCase = new GetRolesByCommunityId(roleRepositoryPrismaImpl);
-
-      const responseDto = await getRolesByCommunityIdUseCase.execute(
-        new MemberActor({}, new MemberID()),
-        { communityId },
-      );
-
-      if (responseDto.isFailure()) response.status(500).send({ error: responseDto.value.message });
-      else response.status(200).send(responseDto.run());
-    } else {
-      response.status(200).send({ error: 'Invalid community id' });
-    }
+  getRoleById = async (request: Request, response: Response) => {
+    const role = await roleQueryModel.getRoleById(request.params.id);
+    response.status(200).send(role);
   };
 }
 

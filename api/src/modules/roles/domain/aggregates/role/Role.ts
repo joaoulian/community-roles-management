@@ -1,25 +1,19 @@
 import { AggregateRoot } from '@core/domain/AggregateRoot';
 import { Name } from '@core/domain/valueObjects/Name';
 
-import { AllowedUser } from './AllowedUser';
 import { CommunityID } from './CommunityID';
-import { Permission } from './Permission';
+import { Permissions } from './Permissions';
 import { RoleID } from './RoleID';
 
 export interface RoleProps {
   communityId: CommunityID;
   name: Name;
-  permissions: Permission[];
-  allowList: AllowedUser[];
+  permissions: Permissions[];
 }
 
 export class Role extends AggregateRoot<RoleProps, RoleID> {
   private constructor(props: RoleProps, id: RoleID) {
     super(props, id);
-  }
-
-  get allowList(): AllowedUser[] {
-    return this.props.allowList;
   }
 
   get name(): Name {
@@ -34,42 +28,12 @@ export class Role extends AggregateRoot<RoleProps, RoleID> {
     return this.props.communityId;
   }
 
-  get permissions(): Permission[] {
+  get permissions(): Permissions[] {
     return this.props.permissions;
   }
 
   static create(props: RoleProps, id?: RoleID): Role {
-    const role = new Role(
-      {
-        ...props,
-        permissions: [...new Set(props.permissions)],
-      },
-      id ?? new RoleID(),
-    );
+    const role = new Role(props, id ?? new RoleID());
     return role;
-  }
-
-  addPermission(permission: Permission): void {
-    const newPermissions = [...new Set([...this.permissions, permission])];
-    this.props.permissions = newPermissions;
-  }
-
-  removePermission(permission: Permission): void {
-    const index = this.permissions.indexOf(permission);
-    if (index >= 0) this.props.permissions.splice(index, 1);
-  }
-
-  updatePermissions(permissions: Permission[]): void {
-    this.props.permissions = permissions;
-  }
-
-  addAllowedUser(allowedUser: AllowedUser): void {
-    const existent = this.allowList.find((user) => user.equals(allowedUser));
-    if (!existent) this.props.allowList = [...new Set([...this.allowList, allowedUser])];
-  }
-
-  removeAllowedUser(username: string): void {
-    const index = this.allowList.findIndex((user) => user.username === username);
-    if (index >= 0) this.props.allowList.splice(index, 1);
   }
 }

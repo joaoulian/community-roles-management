@@ -11,31 +11,17 @@ model Role {
   id          String        @id @default(uuid())
   name        String
   communityId String
-  permissions Permission[]
-  allowList   AllowedUser[]
+  permissions Permissions[]
 
   @@unique([name])
 }
 
-model AllowedUser {
-  id           String       @id @default(uuid())
-  username     String
-  usernameType UsernameType
-  Role         Role?        @relation(fields: [roleId], references: [id])
-  roleId       String
-
-  @@unique([username])
-}
-
-enum Permission {
-  MANAGE_CHANNELS
-  MANAGE_ROLES
-  MANAGE_MEMBERSHIPS
-  MANAGE_CONVERSATIONS
-  ADMINISTRATOR
-}
-
-enum UsernameType {
-  twitter
-  wallet
+model Permissions {
+  id          String   @id @default(uuid())
+  type        String
+  communityId String?
+  channelId   String?
+  Role        Role     @relation(fields: [roleId], references: [id])
+  roleId      String
+  permissions String[]
 }
