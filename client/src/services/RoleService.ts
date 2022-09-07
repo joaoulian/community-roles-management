@@ -10,22 +10,22 @@ class RoleService {
     })
   }
 
-  public async createRole(role: CreateRole): Promise<any> {
+  public async createRole(role: CreateRole): Promise<any | APIError> {
     try {
       const { data } = await this.instance.post(`/role`, role)
       return data
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        console.log('error message: ', err.message)
-        throw new APIError(err.message)
+        return new APIError(err?.response?.data.error ?? err.message)
       } else {
-        console.log('unexpected error: ', err)
-        throw new APIError('An unexpected error occurred')
+        return new APIError('An unexpected error occurred')
       }
     }
   }
 
-  public async getRolesByCommunityId(communityId: string): Promise<any> {
+  public async getRolesByCommunityId(
+    communityId: string
+  ): Promise<any | APIError> {
     try {
       const { data } = await this.instance.get(
         `/role?communityId=${communityId}`
@@ -33,26 +33,25 @@ class RoleService {
       return data
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        console.log('error message: ', err.message)
-        throw new APIError(err.message)
+        return new APIError(err.message)
       } else {
-        console.log('unexpected error: ', err)
-        throw new APIError('An unexpected error occurred')
+        return new APIError('An unexpected error occurred')
       }
     }
   }
 
-  public async updateRole(roleId: string, params: UpdateRole): Promise<any> {
+  public async updateRole(
+    roleId: string,
+    params: UpdateRole
+  ): Promise<any | APIError> {
     try {
       const { data } = await this.instance.put(`/role/${roleId}`, params)
       return data
-    } catch (err) {
+    } catch (err: any) {
       if (axios.isAxiosError(err)) {
-        console.log('error message: ', err.message)
-        throw new APIError(err.message)
+        return new APIError(err?.response?.data.error ?? err.message)
       } else {
-        console.log('unexpected error: ', err)
-        throw new APIError('An unexpected error occurred')
+        return new APIError('An unexpected error occurred')
       }
     }
   }
@@ -70,6 +69,6 @@ interface UpdateRole {
   permissions: string[]
 }
 
-class APIError extends Error {}
+export class APIError extends Error {}
 
 export const roleService = new RoleService()

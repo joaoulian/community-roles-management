@@ -17,7 +17,7 @@ export const Allowlist = (props: AllowlistProps) => {
         <input
           type="text"
           placeholder="Add member email, wallet, or twitter username"
-          name="address"
+          name="alloweduser"
           className="input input-bordered w-full max-w-lg"
           onKeyDown={addUser}
           onChange={(e) => setUsername(e.target.value)}

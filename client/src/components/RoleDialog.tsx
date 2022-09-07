@@ -92,7 +92,7 @@ export const RoleDialog = (props: RoleDialogProps) => {
           <button className="btn btn-primary" onClick={onSave}> Save </button>
         </div>
       </div>
-    </div >
+    </div>
   )
 }
 

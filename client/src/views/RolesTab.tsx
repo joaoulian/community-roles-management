@@ -1,7 +1,7 @@
 import { RoleDialog, RoleToBeSaved } from 'components/RoleDialog';
 import { RolesList } from 'components/RolesList';
 import { useEffect, useState } from 'react';
-import { roleService } from 'services/RoleService';
+import { APIError, roleService } from 'services/RoleService';
 import { toast } from 'react-toastify';
 
 export const RolesTab = (props: RolesTabProps) => {
@@ -30,30 +30,40 @@ export const RolesTab = (props: RolesTabProps) => {
   }
 
   const onClose = () => {
-    setDialogOpen(false);
     setRole(null);
+    setDialogOpen(false);
   }
 
   const update = async (role: RoleToBeSaved & { id: string }) => {
-    await roleService.updateRole(role.id, {
+    const response = await roleService.updateRole(role.id, {
       name: role.name,
       permissions: role.permissions
     });
-    setDialogOpen(false);
-    loadRoles();
-    toast.success("Updated sucessfully");
+
+    if (response instanceof APIError) {
+      toast.error(response.message);
+    } else {
+      onClose();
+      loadRoles();
+      toast.success("Updated sucessfully");
+    }
   }
 
   const create = async (role: RoleToBeSaved & { id: undefined }) => {
-    await roleService.createRole({
+    const response = await roleService.createRole({
       allowList: [],
       communityId: props.communityId,
       name: role.name,
       permissions: role.permissions
     })
-    setDialogOpen(false);
-    loadRoles();
-    toast.success("Created sucessfully");
+
+    if (response instanceof APIError) {
+      toast.error(response.message);
+    } else {
+      onClose();
+      loadRoles();
+      toast.success("Created sucessfully");
+    }
   }
 
   const onSaveRole = async (role: RoleToBeSaved) => {
