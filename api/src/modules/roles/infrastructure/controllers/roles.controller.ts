@@ -6,6 +6,7 @@ import {
 } from '@roles/application/useCases/CreateRole';
 import { roleRepositoryPrismaImpl } from '@roles/infrastructure/repositories';
 import { Context } from '@core/application/Context';
+import { RoleFacade } from '@roles/application/facades/RoleFacade';
 
 import { roleQueryModel } from '../query';
 
@@ -26,7 +27,10 @@ class RolesController implements Controller {
   private canView(communityId: string, context?: Context): boolean {
     if (!context) return false;
     const permissions = context.getResourcePermissions(communityId);
-    return permissions.includes('ADMINISTRATOR') || permissions.includes('MANAGE_ROLES');
+    return (
+      permissions.includes(RoleFacade.CommunityPermission.Administrator) ||
+      permissions.includes(RoleFacade.CommunityPermission.ManageRoles)
+    );
   }
 
   createRole = async (request: Request, response: Response) => {
@@ -42,7 +46,6 @@ class RolesController implements Controller {
     };
 
     const responseDto = await createRoleUseCase.execute(dto, context);
-
     if (responseDto.isFailure())
       return response.status(500).send({ error: responseDto.value.message });
     return response.status(200).send({ id: responseDto.run().id });

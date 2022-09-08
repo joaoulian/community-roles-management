@@ -10,6 +10,8 @@ import { Role } from '@roles/domain/aggregates/role/Role';
 import { UserID } from '@roles/domain/aggregates/role/UserID';
 import { RoleRepository } from '@roles/domain/repositories/RoleRepository';
 
+import { RoleFacade } from '../facades/RoleFacade';
+
 import { convertStringToCommunityPermission } from './utils/convertStringToPermission';
 
 export interface IRequest {
@@ -29,7 +31,10 @@ export class CreateRoleUseCase implements UseCase<IRequest, IResponse> {
   canExecute(communityId: string, context?: Context): boolean {
     if (!context) return false;
     const permissions = context.getResourcePermissions(communityId);
-    return permissions.includes('ADMINISTRATOR') || permissions.includes('MANAGE_ROLES');
+    return (
+      permissions.includes(RoleFacade.CommunityPermission.Administrator) ||
+      permissions.includes(RoleFacade.CommunityPermission.ManageRoles)
+    );
   }
 
   async execute(

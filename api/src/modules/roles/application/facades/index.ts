@@ -2,6 +2,6 @@ import { roleQueryModel } from '@roles/infrastructure/query';
 
 import { RoleFacade } from './RoleFacade';
 
-const facade = new RoleFacade(roleQueryModel);
+const roleFacade = new RoleFacade(roleQueryModel);
 
-export default facade;
+export { roleFacade };
