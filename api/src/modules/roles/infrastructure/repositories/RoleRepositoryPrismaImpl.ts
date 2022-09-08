@@ -11,8 +11,15 @@ export class RoleRepositoryPrismaImpl implements RoleRepository {
 
   async save(role: Role): Promise<void> {
     await this.prisma.$transaction([
-      this.prisma.role.create({
-        data: {
+      this.prisma.role.upsert({
+        where: {
+          id: role.id.toString(),
+        },
+        update: {
+          communityId: role.communityId.toString(),
+          name: role.name.value,
+        },
+        create: {
           id: role.id.toString(),
           communityId: role.communityId.toString(),
           name: role.name.value,
@@ -23,6 +30,7 @@ export class RoleRepositoryPrismaImpl implements RoleRepository {
           roleId: role.id.toValue(),
           userId: userId.toValue(),
         })),
+        skipDuplicates: true,
       }),
       this.prisma.permissions.createMany({
         data: role.permissions.map((permissions) => ({
@@ -32,6 +40,7 @@ export class RoleRepositoryPrismaImpl implements RoleRepository {
           communityId: permissions.communityId?.toValue(),
           permissions: permissions.permissions,
         })),
+        skipDuplicates: true,
       }),
     ]);
   }

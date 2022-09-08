@@ -1,4 +1,4 @@
-export enum ChannelPermission {
+export enum CommunityPermission {
   ManageChannels = 'MANAGE_CHANNELS',
   ManageRoles = 'MANAGE_ROLES',
   ManageMemberships = 'MANAGE_MEMBERSHIPS',
@@ -6,10 +6,10 @@ export enum ChannelPermission {
   Administrator = 'ADMINISTRATOR',
 }
 
-export enum CommunityPermission {
+export enum ChannelPermission {
+  ViewChannel = 'VIEW_CHANNEL',
   ManageChannels = 'MANAGE_CHANNELS',
-  ManageRoles = 'MANAGE_ROLES',
-  ManageMemberships = 'MANAGE_MEMBERSHIPS',
+  ManagePermissions = 'MANAGE_PERMISSIONS',
   ManageConversations = 'MANAGE_CONVERSATIONS',
   Administrator = 'ADMINISTRATOR',
 }

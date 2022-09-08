@@ -1,6 +1,7 @@
 import { AggregateRoot } from '@core/domain/AggregateRoot';
 import { Name } from '@core/domain/valueObjects/Name';
 
+import { ChannelPermissions } from './ChannelPermissions';
 import { CommunityID } from './CommunityID';
 import { Permissions } from './Permissions';
 import { RoleID } from './RoleID';
@@ -41,5 +42,9 @@ export class Role extends AggregateRoot<RoleProps, RoleID> {
   static create(props: RoleProps, id?: RoleID): Role {
     const role = new Role(props, id ?? new RoleID());
     return role;
+  }
+
+  addChannelPermissions(permissions: ChannelPermissions): void {
+    this.props.permissions.push(permissions);
   }
 }

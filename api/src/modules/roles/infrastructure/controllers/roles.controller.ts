@@ -4,6 +4,10 @@ import {
   CreateRoleUseCase,
   IRequest as CreateRoleDTO,
 } from '@roles/application/useCases/CreateRole';
+import {
+  AddChannelPermissionsToRole,
+  IRequest as AddChannelPermissionsToRoleDTO,
+} from '@roles/application/useCases/AddChannelPermissionsToRole';
 import { roleRepositoryPrismaImpl } from '@roles/infrastructure/repositories';
 import { Context } from '@core/application/Context';
 import { RoleFacade } from '@roles/application/facades/RoleFacade';
@@ -23,6 +27,10 @@ class RolesController implements Controller {
     this.router.post(this.path, this.createRole);
     this.router.get(`${this.path}/:id`, this.getRoleById);
     this.router.get(`${this.path}`, this.getRolesByCommunityId);
+    this.router.post(`${this.path}/add_permissions`, this.addChannelPermissionsToRole);
+
+    // test endpoint
+    this.router.get(`${this.path}/channel/:id`, this.onlyChannel);
   }
 
   private canView(communityId: string, context?: Context): boolean {
@@ -33,6 +41,19 @@ class RolesController implements Controller {
       permissions.includes(RoleFacade.CommunityPermission.ManageRoles)
     );
   }
+
+  private channelView(channelId: string, context?: Context): boolean {
+    if (!context) return false;
+    const permissions = context.getResourcePermissions(channelId);
+    return permissions.includes(RoleFacade.ChannelPermission.ViewChannel);
+  }
+
+  onlyChannel = async (request: Request, response: Response) => {
+    const context = response.locals.user;
+    const canView = this.channelView(request.params.id, context);
+    if (!canView) return response.status(403).send({ error: 'Forbidden' });
+    return response.status(200).send({ message: 'Secret channel' });
+  };
 
   createRole = async (request: Request, response: Response) => {
     try {
@@ -51,6 +72,30 @@ class RolesController implements Controller {
       if (responseDto.isFailure())
         return response.status(500).send({ error: responseDto.value.message });
       return response.status(200).send({ id: responseDto.run().id });
+    } catch (err) {
+      if (err instanceof ForbiddenError) return response.status(403).send({ error: 'Forbidden' });
+      return response.status(500).send({ error: 'Unexpected error' });
+    }
+  };
+
+  addChannelPermissionsToRole = async (request: Request, response: Response) => {
+    try {
+      const context = response.locals.user;
+      const addChannelPermissionsToRoleUseCase = new AddChannelPermissionsToRole(
+        roleRepositoryPrismaImpl,
+      );
+
+      const body = request.body;
+      const dto: AddChannelPermissionsToRoleDTO = {
+        roleId: body.roleId,
+        permissions: body.permissions,
+        channelId: body.channelId,
+      };
+
+      const responseDto = await addChannelPermissionsToRoleUseCase.execute(dto, context);
+      if (responseDto.isFailure())
+        return response.status(500).send({ error: responseDto.value.message });
+      return response.status(200).send({ success: true });
     } catch (err) {
       if (err instanceof ForbiddenError) return response.status(403).send({ error: 'Forbidden' });
       return response.status(500).send({ error: 'Unexpected error' });

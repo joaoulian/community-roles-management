@@ -14,7 +14,7 @@ model Role {
   permissions Permissions[]
   users       UsersOnRoles[]
 
-  @@unique([name])
+  @@unique([communityId, name])
 }
 
 model Permissions {
@@ -25,6 +25,8 @@ model Permissions {
   Role        Role     @relation(fields: [roleId], references: [id])
   roleId      String
   permissions String[]
+
+  @@unique([roleId, channelId, communityId])
 }
 
 model UsersOnRoles {
