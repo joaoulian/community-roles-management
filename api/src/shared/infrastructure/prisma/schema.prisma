@@ -8,31 +8,33 @@ datasource db {
 }
 
 model Role {
-  id          String         @id @default(uuid())
+  id          String        @id @default(uuid())
   name        String
   communityId String
   permissions Permissions[]
-  users       UsersOnRoles[]
+  users       UserRoles[]
 
   @@unique([communityId, name])
+  @@map("role")
 }
 
 model Permissions {
   id          String   @id @default(uuid())
-  type        String
   communityId String?
   channelId   String?
-  Role        Role     @relation(fields: [roleId], references: [id])
+  role        Role     @relation(fields: [roleId], references: [id])
   roleId      String
-  permissions String[]
+  list        String[]
 
   @@unique([roleId, channelId, communityId])
+  @@map("permissions")
 }
 
-model UsersOnRoles {
-  Role   Role   @relation(fields: [roleId], references: [id])
+model UserRoles {
+  role   Role   @relation(fields: [roleId], references: [id])
   roleId String
   userId String
 
   @@id([userId, roleId])
+  @@map("user_roles")
 }

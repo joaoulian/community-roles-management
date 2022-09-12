@@ -1,5 +1,5 @@
 import { Name } from '@core/domain/valueObjects/Name';
-import { Role as PrismaRole, Permissions as PrismaPermissions, UsersOnRoles } from '@prisma/client';
+import { Role as PrismaRole, Permissions as PrismaPermissions, UserRoles } from '@prisma/client';
 import {
   convertStringToChannelPermission,
   convertStringToCommunityPermission,
@@ -15,9 +15,7 @@ import { RoleID } from '@roles/domain/aggregates/role/RoleID';
 import { UserID } from '@roles/domain/aggregates/role/UserID';
 
 export class RoleRepositoryPrismaMapper {
-  static toDomain(
-    db: PrismaRole & { permissions: PrismaPermissions[]; users: UsersOnRoles[] },
-  ): Role {
+  static toDomain(db: PrismaRole & { permissions: PrismaPermissions[]; users: UserRoles[] }): Role {
     const communityId = new CommunityID(db.communityId);
     const id = new RoleID(db.id);
     const name = Name.create(db.name);
@@ -45,8 +43,8 @@ export class RoleRepositoryPrismaMapper {
   }
 
   static convertPermissions(permissions: PrismaPermissions): Permissions {
-    if (permissions.type === 'channel') {
-      const list = permissions.permissions.reduce((acc, permission) => {
+    if (permissions.channelId) {
+      const list = permissions.list.reduce((acc, permission) => {
         const converted = convertStringToChannelPermission(permission);
         if (converted) acc.push(converted);
         return acc;
@@ -59,8 +57,8 @@ export class RoleRepositoryPrismaMapper {
         communityId: undefined,
         permissions: list,
       });
-    } else if (permissions.type === 'community') {
-      const list = permissions.permissions.reduce((acc, permission) => {
+    } else if (permissions.communityId) {
+      const list = permissions.list.reduce((acc, permission) => {
         const converted = convertStringToCommunityPermission(permission);
         if (converted) acc.push(converted);
         return acc;

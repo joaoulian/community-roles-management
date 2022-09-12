@@ -1,4 +1,4 @@
-import { Permissions, PrismaClient, Role as PersistanceRole, UsersOnRoles } from '@prisma/client';
+import { Permissions, PrismaClient, Role as PersistanceRole, UserRoles } from '@prisma/client';
 import { CommunityID } from '@roles/domain/aggregates/role/CommunityID';
 import { Role } from '@roles/domain/aggregates/role/Role';
 import { RoleID } from '@roles/domain/aggregates/role/RoleID';
@@ -25,7 +25,7 @@ export class RoleRepositoryPrismaImpl implements RoleRepository {
           name: role.name.value,
         },
       }),
-      this.prisma.usersOnRoles.createMany({
+      this.prisma.userRoles.createMany({
         data: role.users.map((userId) => ({
           roleId: role.id.toValue(),
           userId: userId.toValue(),
@@ -35,10 +35,9 @@ export class RoleRepositoryPrismaImpl implements RoleRepository {
       this.prisma.permissions.createMany({
         data: role.permissions.map((permissions) => ({
           roleId: role.id.toString(),
-          type: permissions.type,
           channelId: permissions.channelId?.toValue(),
           communityId: permissions.communityId?.toValue(),
-          permissions: permissions.permissions,
+          list: permissions.permissions,
         })),
         skipDuplicates: true,
       }),
@@ -84,7 +83,7 @@ export class RoleRepositoryPrismaImpl implements RoleRepository {
   private convertPersistanceDataToDomain(
     db: PersistanceRole & {
       permissions: Permissions[];
-      users: UsersOnRoles[];
+      users: UserRoles[];
     },
   ): Role {
     return RoleRepositoryPrismaMapper.toDomain(db);

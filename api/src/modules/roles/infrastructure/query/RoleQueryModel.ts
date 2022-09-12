@@ -28,12 +28,12 @@ export class RoleQueryModel {
   }
 
   async getUserPermissions(userId: string): Promise<UserPermissionsMap> {
-    const userRoles = await this.prisma.usersOnRoles.findMany({
+    const userRoles = await this.prisma.userRoles.findMany({
       where: {
         userId,
       },
       include: {
-        Role: {
+        role: {
           include: {
             permissions: true,
           },
@@ -44,14 +44,14 @@ export class RoleQueryModel {
 
     const response: UserPermissionsMap = {};
     userRoles.map((userRole) => {
-      const permissions = userRole.Role.permissions;
+      const permissions = userRole.role.permissions;
 
-      permissions.forEach((list) => {
-        const resourceId = list.channelId ?? list.communityId;
+      permissions.forEach((permissionSet) => {
+        const resourceId = permissionSet.channelId ?? permissionSet.communityId;
 
         if (resourceId) {
           if (!response[resourceId]) response[resourceId] = [];
-          response[resourceId] = [...new Set([...response[resourceId], ...list.permissions])];
+          response[resourceId] = [...new Set([...response[resourceId], ...permissionSet.list])];
         }
       });
     });
