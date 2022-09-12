@@ -1,9 +1,6 @@
 import { RoleRepositoryMemoryImpl } from '@roles/infrastructure/repositories/RoleRepositoryMemoryImpl';
 import { CommunityID } from '@roles/domain/aggregates/role/CommunityID';
-import { RoleID } from '@roles/domain/aggregates/role/RoleID';
-import { CommunityPermissions } from '@roles/domain/aggregates/role/CommunityPermissions';
 import { mockContext } from '@core/application/tests/mocks/Context.mock';
-import { ForbiddenError } from '@core/application/ForbiddenError';
 import { mockRole } from '@roles/domain/aggregates/role/tests/mocks/Role.mock';
 import { UserID } from '@roles/domain/aggregates/role/UserID';
 import { mockCommunityPermissions } from '@roles/domain/aggregates/role/tests/mocks/Permissions.mock';
@@ -23,7 +20,7 @@ describe('Add channel permissions to role', () => {
       permissions: [
         mockCommunityPermissions({
           communityId,
-          permissions: [RoleFacade.CommunityPermission.Administrator],
+          list: [RoleFacade.CommunityPermission.Administrator],
         }),
       ],
     });

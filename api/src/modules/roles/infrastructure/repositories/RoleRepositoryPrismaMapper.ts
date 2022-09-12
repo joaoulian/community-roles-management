@@ -55,7 +55,7 @@ export class RoleRepositoryPrismaMapper {
       return ChannelPermissions.create({
         channelId: new ChannelID(permissions.channelId),
         communityId: undefined,
-        permissions: list,
+        list,
       });
     } else if (permissions.communityId) {
       const list = permissions.list.reduce((acc, permission) => {
@@ -69,7 +69,7 @@ export class RoleRepositoryPrismaMapper {
       return CommunityPermissions.create({
         channelId: undefined,
         communityId: new CommunityID(permissions.communityId),
-        permissions: list,
+        list,
       });
     }
 

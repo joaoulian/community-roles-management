@@ -10,7 +10,7 @@ describe('CommunityPermissions', () => {
       const args = {
         channelId: undefined,
         communityId: new CommunityID(),
-        permissions: [CommunityPermission.Administrator, CommunityPermission.ManageChannels],
+        list: [CommunityPermission.Administrator, CommunityPermission.ManageChannels],
       };
 
       const communityPermissions = CommunityPermissions.create(args);
@@ -19,15 +19,15 @@ describe('CommunityPermissions', () => {
       expect(communityPermissions.type).toEqual(PermissionsType.Community);
       expect(communityPermissions.channelId).toBeUndefined();
       expect(communityPermissions.communityId).toEqual(args.communityId);
-      expect(communityPermissions.permissions[0]).toEqual(args.permissions[0]);
-      expect(communityPermissions.permissions[1]).toEqual(args.permissions[1]);
+      expect(communityPermissions.list[0]).toEqual(args.list[0]);
+      expect(communityPermissions.list[1]).toEqual(args.list[1]);
     });
 
     test('should ignore duplicated permissions', () => {
       const args = {
         channelId: undefined,
         communityId: new CommunityID(),
-        permissions: [
+        list: [
           CommunityPermission.Administrator,
           CommunityPermission.ManageChannels,
           CommunityPermission.Administrator,
@@ -36,9 +36,9 @@ describe('CommunityPermissions', () => {
 
       const communityPermissions = CommunityPermissions.create(args);
 
-      expect(communityPermissions.permissions).toHaveLength(2);
-      expect(communityPermissions.permissions[0]).toEqual(CommunityPermission.Administrator);
-      expect(communityPermissions.permissions[1]).toEqual(CommunityPermission.ManageChannels);
+      expect(communityPermissions.list).toHaveLength(2);
+      expect(communityPermissions.list[0]).toEqual(CommunityPermission.Administrator);
+      expect(communityPermissions.list[1]).toEqual(CommunityPermission.ManageChannels);
     });
   });
 });

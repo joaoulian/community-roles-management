@@ -60,7 +60,7 @@ export class CreateRoleUseCase implements UseCase<IRequest, IResponse> {
       const communityPermissions = CommunityPermissions.create({
         channelId: undefined,
         communityId,
-        permissions: permissionsList,
+        list: permissionsList,
       });
 
       const users = request.users.map((userId) => new UserID(userId));

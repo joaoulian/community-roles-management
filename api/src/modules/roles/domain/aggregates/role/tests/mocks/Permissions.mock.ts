@@ -10,7 +10,7 @@ export const mockCommunityPermissions = (
   return CommunityPermissions.create({
     channelId: undefined,
     communityId: new CommunityID(),
-    permissions: [CommunityPermission.Administrator],
+    list: [CommunityPermission.Administrator],
     ...props,
   });
 };
@@ -21,7 +21,7 @@ export const mockChannelPermissions = (
   return ChannelPermissions.create({
     channelId: new ChannelID(),
     communityId: undefined,
-    permissions: [ChannelPermission.Administrator],
+    list: [ChannelPermission.Administrator],
     ...props,
   });
 };

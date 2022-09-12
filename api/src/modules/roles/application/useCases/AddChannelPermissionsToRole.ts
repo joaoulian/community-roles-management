@@ -62,7 +62,7 @@ export class AddChannelPermissionsToRole implements UseCase<IRequest, IResponse>
       const channelPermissions = ChannelPermissions.create({
         channelId,
         communityId: undefined,
-        permissions: permissionsList,
+        list: permissionsList,
       });
 
       role.addChannelPermissions(channelPermissions);

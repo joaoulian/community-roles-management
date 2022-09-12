@@ -37,7 +37,7 @@ export class RoleRepositoryPrismaImpl implements RoleRepository {
           roleId: role.id.toString(),
           channelId: permissions.channelId?.toValue(),
           communityId: permissions.communityId?.toValue(),
-          list: permissions.permissions,
+          list: permissions.list,
         })),
         skipDuplicates: true,
       }),

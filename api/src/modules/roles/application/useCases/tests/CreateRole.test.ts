@@ -32,7 +32,7 @@ describe('Create role use case', () => {
     expect(storedRole!.permissions[0].props.communityId?.toValue()).toEqual(
       request.communityId.toString(),
     );
-    expect(storedRole!.permissions[0].props.permissions).toEqual(['ADMINISTRATOR']);
+    expect(storedRole!.permissions[0].list).toEqual(['ADMINISTRATOR']);
     expect(storedRole!.communityId.toValue()).toBe(request.communityId);
   });
 

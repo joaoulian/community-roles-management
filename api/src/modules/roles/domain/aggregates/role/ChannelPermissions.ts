@@ -4,7 +4,7 @@ import { ChannelPermission } from './Permission';
 import { Permissions, PermissionsProps, PermissionsType } from './Permissions';
 
 export interface ChannelPermissionsProps extends PermissionsProps {
-  permissions: ChannelPermission[];
+  list: ChannelPermission[];
   channelId: ChannelID;
   communityId: undefined;
 }
@@ -16,8 +16,8 @@ export class ChannelPermissions extends Permissions<ChannelPermissionsProps> {
     super(props);
   }
 
-  get permissions(): ChannelPermission[] {
-    return this.props.permissions;
+  get list(): ChannelPermission[] {
+    return this.props.list;
   }
 
   get communityId(): undefined {
@@ -31,7 +31,7 @@ export class ChannelPermissions extends Permissions<ChannelPermissionsProps> {
   static create(props: ChannelPermissionsProps): ChannelPermissions {
     const permissions = new ChannelPermissions({
       ...props,
-      permissions: [...new Set(props.permissions)],
+      list: [...new Set(props.list)],
     });
     return permissions;
   }

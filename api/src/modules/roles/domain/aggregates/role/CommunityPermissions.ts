@@ -3,7 +3,7 @@ import { CommunityPermission } from './Permission';
 import { Permissions, PermissionsProps, PermissionsType } from './Permissions';
 
 export interface CommunityPermissionsProps extends PermissionsProps {
-  permissions: CommunityPermission[];
+  list: CommunityPermission[];
   channelId: undefined;
   communityId: CommunityID;
 }
@@ -15,8 +15,8 @@ export class CommunityPermissions extends Permissions<CommunityPermissionsProps>
     super(props);
   }
 
-  get permissions(): CommunityPermission[] {
-    return this.props.permissions;
+  get list(): CommunityPermission[] {
+    return this.props.list;
   }
 
   get communityId(): CommunityID {
@@ -30,7 +30,7 @@ export class CommunityPermissions extends Permissions<CommunityPermissionsProps>
   static create(props: CommunityPermissionsProps): CommunityPermissions {
     const permissions = new CommunityPermissions({
       ...props,
-      permissions: [...new Set(props.permissions)],
+      list: [...new Set(props.list)],
     });
 
     return permissions;

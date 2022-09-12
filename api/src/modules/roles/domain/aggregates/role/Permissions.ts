@@ -9,8 +9,8 @@ export abstract class Permissions<
 > extends ValueObject<T> {
   abstract type: PermissionsType;
 
-  get permissions(): (CommunityPermission | ChannelPermission)[] {
-    return this.props.permissions;
+  get list(): (CommunityPermission | ChannelPermission)[] {
+    return this.props.list;
   }
 
   get communityId(): CommunityID | undefined {
@@ -27,7 +27,7 @@ export abstract class Permissions<
 }
 
 export interface PermissionsProps {
-  permissions: (CommunityPermission | ChannelPermission)[];
+  list: (CommunityPermission | ChannelPermission)[];
   communityId?: CommunityID;
   channelId?: ChannelID;
 }
