@@ -47,8 +47,12 @@ export class RoleQueryModel {
       const permissions = userRole.Role.permissions;
 
       permissions.forEach((list) => {
-        if (list.channelId) response[list.channelId] = list.permissions;
-        else if (list.communityId) response[list.communityId] = list.permissions;
+        const resourceId = list.channelId ?? list.communityId;
+
+        if (resourceId) {
+          if (!response[resourceId]) response[resourceId] = [];
+          response[resourceId] = [...new Set([...response[resourceId], ...list.permissions])];
+        }
       });
     });
 
