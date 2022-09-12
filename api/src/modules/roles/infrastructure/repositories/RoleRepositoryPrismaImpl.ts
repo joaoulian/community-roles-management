@@ -1,5 +1,7 @@
 import { Permissions, PrismaClient, Role as PersistanceRole, UserRoles } from '@prisma/client';
+import { ChannelPermissions } from '@roles/domain/aggregates/role/ChannelPermissions';
 import { CommunityID } from '@roles/domain/aggregates/role/CommunityID';
+import { CommunityPermissions } from '@roles/domain/aggregates/role/CommunityPermissions';
 import { Role } from '@roles/domain/aggregates/role/Role';
 import { RoleID } from '@roles/domain/aggregates/role/RoleID';
 import { RoleRepository } from '@roles/domain/repositories/RoleRepository';
@@ -10,6 +12,14 @@ export class RoleRepositoryPrismaImpl implements RoleRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async save(role: Role): Promise<void> {
+    const communityPermissions: CommunityPermissions[] = role.permissions.filter(
+      (permissions): permissions is CommunityPermissions =>
+        permissions instanceof CommunityPermissions,
+    );
+    const channelPermissions: ChannelPermissions[] = role.permissions.filter(
+      (permissions): permissions is ChannelPermissions => permissions instanceof ChannelPermissions,
+    );
+
     await this.prisma.$transaction([
       this.prisma.role.upsert({
         where: {
@@ -32,14 +42,43 @@ export class RoleRepositoryPrismaImpl implements RoleRepository {
         })),
         skipDuplicates: true,
       }),
-      this.prisma.permissions.createMany({
-        data: role.permissions.map((permissions) => ({
-          roleId: role.id.toString(),
-          channelId: permissions.channelId?.toValue(),
-          communityId: permissions.communityId?.toValue(),
-          list: permissions.list,
-        })),
-        skipDuplicates: true,
+      ...communityPermissions.map((permissions) => {
+        return this.prisma.permissions.upsert({
+          where: {
+            community_permissions_identifier: {
+              communityId: permissions.communityId.toValue(),
+              roleId: role.id.toValue(),
+            },
+          },
+          update: {
+            list: permissions.list,
+          },
+          create: {
+            roleId: role.id.toString(),
+            channelId: undefined,
+            communityId: permissions.communityId.toValue(),
+            list: permissions.list,
+          },
+        });
+      }),
+      ...channelPermissions.map((permissions) => {
+        return this.prisma.permissions.upsert({
+          where: {
+            channel_permissions_identifier: {
+              channelId: permissions.channelId.toValue(),
+              roleId: role.id.toValue(),
+            },
+          },
+          update: {
+            list: permissions.list,
+          },
+          create: {
+            roleId: role.id.toString(),
+            communityId: undefined,
+            channelId: permissions.channelId.toValue(),
+            list: permissions.list,
+          },
+        });
       }),
     ]);
   }

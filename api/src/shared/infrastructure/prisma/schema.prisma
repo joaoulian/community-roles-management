@@ -26,7 +26,8 @@ model Permissions {
   roleId      String
   list        String[]
 
-  @@unique([roleId, channelId, communityId])
+  @@unique(fields: [roleId, communityId], name: "community_permissions_identifier")
+  @@unique(fields: [roleId, channelId], name: "channel_permissions_identifier")
   @@map("permissions")
 }
 
